@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Shiny 기초실습</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="김진섭, 이현기; <span>&lt;i class="fab  fa-github faa-float animated "&gt;&lt;/i&gt;leevenstar</span>" />
+    <meta name="date" content="2022-01-10" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/font-awesome-animation/font-awesome-animation-emi.css" rel="stylesheet" />
+    <script src="libs/fontawesome/js/fontawesome-all.min.js"></script>
+    <link rel="stylesheet" href="css/footer-header.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Shiny 기초실습
+### 김진섭, 이현기; <a href="https://github.com/leevenstar"><span>&lt;i class="fab  fa-github faa-float animated "&gt;&lt;/i&gt;leevenstar</span></a>
+### 차라투(주)
+### 2022-01-10
+
+---
+
+
+
+
+
+layout: true
+
+&lt;div class="my-footer"&gt;&lt;span&gt;&lt;a href="https://www.zarathu.com"&gt;Zarathu Co.,Ltd&lt;/a&gt;   
+&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;
+&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;
+&lt;a href="https://github.com/jinseob2kim"&gt;김진섭&lt;/a&gt;&lt;/span&gt;&lt;/div&gt; 
+
+---
+
+# 실습 목표
+
+.large[
+ * [RStudio cloud](https://rstudio.cloud/) 를 이용, 클라우드 환경에서 R을 쓸 수 있다.
+]
+
+--
+
+.large[
+ * `app.R` 파일에 Shiny의 **ui**와 **server** 코드를 입력할 수 있다.
+ 
+ 
+ * `fluidPage`의 `sidebarLayout` 레이아웃을 이용, 왼쪽에는 UI 옵션, 오른쪽에는 해당되는 결과를 보여줄 수 있다.
+ 
+ 
+ * [DT](https://rstudio.github.io/DT/) 패키지로 데이터를, [ggplot2](https://ggplot2.tidyverse.org/) 로 히스토그램을 보여줄 수 있다. 
+]
+
+
+--
+.large[
+ * **Reactivity** 를 이해한다.  
+]
+
+--
+.large[
+ * [shinyapps.io](https://www.shinyapps.io/) 에 app 을 배포할 수 있다. 
+]
+
+--
+.large[
+ * 지도패키지 [leaflet](https://rstudio.github.io/leaflet/shiny.html) 실습은 오늘 무리..
+]
+
+
+
+---
+
+# Shiny 예
+
+.large[
+* [공식 갤러리](https://shiny.rstudio.com/gallery/)
+
+
+* [통계분석 웹 by 차라투](http://app.zarathu.com/) 
+
+
+* [메타분석 by 차라투](http://app.zarathu.com/meta-analysis/)
+
+
+* [경기도 코로나 대시보드 by Shinykorea](https://github.com/shinykorea/Meetup)
+
+
+* [병원 입지분석 플랫폼 by 브랜드본담](https://bondam.co.kr/wherehere)
+]
+
+
+
+---
+
+class: center, middle
+
+# 시작하기 전에
+
+
+---
+
+# [RStudio cloud](https://rstudio.cloud/)
+
+.large[
+ * **클라우드 환경**에서 RStudio 무료 이용.
+ 
+ 
+ * 성능은 나쁘지만(1 코어, 램 1기가), 실습용으론 충분.
+]
+
+
+&lt;a href="https://rstudio.cloud/"&gt;&lt;img src="rstudio-cloud.png" width=100%&gt;&lt;/a&gt;
+
+
+---
+
+# 실습환경 만들기: RStudio cloud 
+
+**Step 1:** https://rstudio.cloud 회원 가입
+
+**Step 2:** https://rstudio.cloud/spaces/30306/join?access_code=s4hEiPXQF%2BjosPclQEzgTtR0mPWDuh7Dhr2O7wAg 들어가서 **"Join Space"** 클릭
+
+**Step 3:** 위쪽 **"Projects"** 클릭 후, **"New Project"** 를 눌러 **"New Project from Git Repo"** 선택. Repo 주소는 https://github.com/jinseob2kim/shiny-workshop-odsc2019.
+
+
+![Step 3](https://i.imgur.com/nU5bbFL.png)
+
+모든 강의자료는 RStudio cloud 에 들어 있습니다. 
+
+
+---
+
+# 실습환경 만들기: 개인 PC
+
+**Step 1:** 패키지 설치
+
+```r
+install.packages(c("shiny", "ggplot2", "dplyr", "DT", "colourpicker", "readr")) 
+```
+
+
+&lt;br&gt;
+**Step 2:** https://github.com/jinseob2kim/shiny-workshop-odsc2019 들어간 후 
+
+&lt;br&gt;
+
+**Step 3:** 녹색 **"Clone or download"** 클릭 후 **"Download ZIP"** 을 눌러 자료 다운. 
+
+
+---
+
+# 실습파일 
+
+.large[
+* `app_01.R` - `app_09.R`: 9단계 문제 
+
+
+* `app_01_sol.R` - `app_09_sol.R`: 해답
+
+
+* `app_full_version.R`: [최종 완성 앱](https://daattali.shinyapps.io/nba2018/)
+
+
+* **data** 폴더: [Kaggle의 NBA 2018/19 시즌 스탯 데이터](https://www.kaggle.com/schmadam97/nba-regular-season-stats-20182019)
+
+
+* **docs** 폴더: 이 슬라이드 파일 
+
+]
+
+
+---
+
+class: center, middle
+
+# Shiny 소개
+
+
+---
+
+### [Shiny](https://shiny.rstudio.com/) is an R package that makes it easy to **build web applications with R**
+
+
+
+&lt;img src="rs.png" width="883" style="display: block; margin: auto;" /&gt;
+
+---
+
+# 웹 개발 지식 없어도 됨
+
+&lt;img src="css.png" width="1113" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Shiny app
+
+&lt;img src="ui.png" width="1741" style="display: block; margin: auto;" /&gt;
+
+---
+
+# UI &amp; SERVER
+
+&lt;img src="ui2.png" width="1719" style="display: block; margin: auto;" /&gt;
+
+
+
+
+
+---
+
+# UI &amp; SERVER
+
+&lt;center&gt;
+&lt;a href="https://codingclubuc3m.rbind.io/post/2018-06-19/"&gt;&lt;img src="https://codingclubuc3m.rbind.io/post/2018-06-19_files/shinyApp.png" width=70%&gt;&lt;/a&gt;
+&lt;/center&gt;
+
+---
+
+# UI &amp; SERVER
+
+&lt;center&gt;
+&lt;a href="https://towardsdatascience.com/build-your-first-shiny-web-app-in-r-72f9538f9868/"&gt;
+https://towardsdatascience.com/build-your-first-shiny-web-app-in-r-72f9538f9868 &lt;/a&gt;
+&lt;/center&gt;
+
+---
+
+# Make basic App
+
+* `app.R` 파일 만들고(**이름 바뀌면 안됨**)
+
+* `ui` 와 `server` 코드 작성 후 `shinyApp` 으로 마무리. **Run App** 눌러 실행.
+
+  - `ui.R`, `server.R` 따로 작성할 수도 있음. 개인 취향
+
+
+
+&lt;img src="basic.png" width="1727" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+# Stop App
+
+**ESC** or 빨간 **Stop** 버튼
+
+&lt;img src="stop.png" width="1496" style="display: block; margin: auto;" /&gt;
+
+---
+
+# 실습: `app_01.R`
+
+.large[
+* `shiny` 패키지 로드 후, 아래와 같이 데이터를 읽는다.
+
+```r
+players &lt;- read.csv("data/nba2018.csv")
+```
+
+* 데이터 확인: **ui** 에 **데이터 행 수** 를 보여주기.
+
+
+* 데이터 탐색: 선수들 **나이(age), 연봉(salary), 키(height) 의 범위**는?
+
+]
+
+
+---
+class: center, middle
+
+# UI 꾸미기
+
+
+---
+# Add text
+
+
+```r
+library(shiny)
+
+ui &lt;- fluidPage(
+  "Hello ODSC"
+)
+
+server &lt;- function(input, output, session){
+
+}
+
+shinyApp(ui, server)
+```
+
+&lt;img src="addtext.png" width="403" style="display: block; margin: auto;" /&gt;
+
+---
+# Use `html` tags
+
+```r
+ui &lt;- fluidPage(
+  h1("My Shiny app"),
+  strong("Dean Attali"),
+  br(),
+  "Hello ODSC"
+)
+```
+
+&lt;img src="addtext2.png" width="399" style="display: block; margin: auto;" /&gt;
+
+---
+
+# [`html` 다른 옵션들](https://shiny.rstudio.com/articles/tag-glossary.html)
+
+
+
+```r
+names(tags)
+```
+
+```
+##   [1] "a"                   "abbr"                "address"            
+##   [4] "animate"             "animateMotion"       "animateTransform"   
+##   [7] "area"                "article"             "aside"              
+##  [10] "audio"               "b"                   "base"               
+##  [13] "bdi"                 "bdo"                 "blockquote"         
+##  [16] "body"                "br"                  "button"             
+##  [19] "canvas"              "caption"             "circle"             
+##  [22] "cite"                "clipPath"            "code"               
+##  [25] "col"                 "colgroup"            "color-profile"      
+##  [28] "command"             "data"                "datalist"           
+##  [31] "dd"                  "defs"                "del"                
+##  [34] "desc"                "details"             "dfn"                
+##  [37] "dialog"              "discard"             "div"                
+##  [40] "dl"                  "dt"                  "ellipse"            
+##  [43] "em"                  "embed"               "eventsource"        
+##  [46] "feBlend"             "feColorMatrix"       "feComponentTransfer"
+##  [49] "feComposite"         "feConvolveMatrix"    "feDiffuseLighting"  
+##  [52] "feDisplacementMap"   "feDistantLight"      "feDropShadow"       
+##  [55] "feFlood"             "feFuncA"             "feFuncB"            
+##  [58] "feFuncG"             "feFuncR"             "feGaussianBlur"     
+##  [61] "feImage"             "feMerge"             "feMergeNode"        
+##  [64] "feMorphology"        "feOffset"            "fePointLight"       
+##  [67] "feSpecularLighting"  "feSpotLight"         "feTile"             
+##  [70] "feTurbulence"        "fieldset"            "figcaption"         
+##  [73] "figure"              "filter"              "footer"             
+##  [76] "foreignObject"       "form"                "g"                  
+##  [79] "h1"                  "h2"                  "h3"                 
+##  [82] "h4"                  "h5"                  "h6"                 
+##  [85] "hatch"               "hatchpath"           "head"               
+##  [88] "header"              "hgroup"              "hr"                 
+##  [91] "html"                "i"                   "iframe"             
+##  [94] "image"               "img"                 "input"              
+##  [97] "ins"                 "kbd"                 "keygen"             
+## [100] "label"               "legend"              "li"                 
+## [103] "line"                "linearGradient"      "link"               
+## [106] "main"                "map"                 "mark"               
+## [109] "marker"              "mask"                "menu"               
+## [112] "meta"                "metadata"            "meter"              
+## [115] "mpath"               "nav"                 "noscript"           
+## [118] "object"              "ol"                  "optgroup"           
+## [121] "option"              "output"              "p"                  
+## [124] "param"               "path"                "pattern"            
+## [127] "picture"             "polygon"             "polyline"           
+## [130] "pre"                 "progress"            "q"                  
+## [133] "radialGradient"      "rb"                  "rect"               
+## [136] "rp"                  "rt"                  "rtc"                
+## [139] "ruby"                "s"                   "samp"               
+## [142] "script"              "section"             "select"             
+## [145] "set"                 "slot"                "small"              
+## [148] "solidcolor"          "source"              "span"               
+## [151] "stop"                "strong"              "style"              
+## [154] "sub"                 "summary"             "sup"                
+## [157] "svg"                 "switch"              "symbol"             
+## [160] "table"               "tbody"               "td"                 
+## [163] "template"            "text"                "textarea"           
+## [166] "textPath"            "tfoot"               "th"                 
+## [169] "thead"               "time"                "title"              
+## [172] "tr"                  "track"               "tspan"              
+## [175] "u"                   "ul"                  "use"                
+## [178] "var"                 "video"               "view"               
+## [181] "wbr"
+```
+
+
+---
+
+# `titlePanel()`
+
+```r
+ui &lt;- fluidPage(
+* titlePanel("My Shiny app"),
+  strong("Dean Attali"),
+  br(),
+  "Hello ODSC"
+)
+```
+
+&lt;img src="addtext3.png" width="443" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Layout: `sidebarLayout()` 
+
+* 화면 **왼쪽에서 control**, **오른쪽에 결과**: [다양한 Layout](http://shiny.rstudio.com/articles/layout-guide.html) 
+
+```r
+fluidPage(
+  titlePanel("My Shiny app"),
+* sidebarLayout(
+*   sidebarPanel(
+      "This is a side panel"),
+*   mainPanel(
+      "And this is the main stuff")
+    )
+)
+```
+
+&lt;img src="sidebar.png" width="1072" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Shiny 는 ui 를 `html` 로 바꾼다.
+
+
+```r
+ui &lt;- fluidPage(
+  titlePanel("My Shiny app"),
+  sidebarLayout(
+   sidebarPanel(
+      "This is a side panel"),
+   mainPanel(
+      "And this is the main stuff")
+    )
+)
+
+print(ui)
+```
+
+```
+## &lt;div class="container-fluid"&gt;
+##   &lt;h2&gt;My Shiny app&lt;/h2&gt;
+##   &lt;div class="row"&gt;
+##     &lt;div class="col-sm-4"&gt;
+##       &lt;form class="well" role="complementary"&gt;This is a side panel&lt;/form&gt;
+##     &lt;/div&gt;
+##     &lt;div class="col-sm-8" role="main"&gt;And this is the main stuff&lt;/div&gt;
+##   &lt;/div&gt;
+## &lt;/div&gt;
+```
+
+
+---
+
+# 실습: `app_02.R`
+
+.large[
+1. `titlePanel` 추가: "NBA 2018/19 Player Stats"
+
+2. `sidebarLayout` 적용
+
+  - `sidebarPanel`: "Exploring all player stats from the NBA 2018/19 season" 쓰기
+  
+  - `mainPanel`: **굵은 글씨**로 "There are X players in the dataset" (X는 실제 숫자)
+  
+]
+
+
+---
+class: center, middle
+
+# Inputs and outputs
+
+
+---
+
+# Inputs and outputs
+
+* 반응형 웹은 유저가 조절할 수 있는 **input** 과 그에 대응하는 **output** 이 있다.
+
+&lt;img src="inputoutput.png" width="2132" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# [Input 종류](https://shiny.rstudio.com/tutorial/written-tutorial/lesson3/images/basic-widgets.png)
+
+&lt;img src="input.png" width="3216" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# 예: `sliderInput`
+
+```r
+library(shiny)
+ui &lt;- fluidPage(
+* sliderInput(
+*   inputId = "num", label = "Choose a number", min = 0, max = 100, 
+    value = 20)
+* )
+
+server &lt;- function(input, output) {}
+shinyApp(ui = ui, server = server)
+```
+
+&lt;img src="slider.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Shiny: input `\(\rightarrow\)` `html`
+
+
+```r
+print(
+  sliderInput("num", "Choose a number", min = 0, max = 100, 
+              value = 20)
+)
+```
+
+```
+## &lt;div class="form-group shiny-input-container"&gt;
+##   &lt;label class="control-label" id="num-label" for="num"&gt;Choose a number&lt;/label&gt;
+##   &lt;input class="js-range-slider" id="num" data-skin="shiny" data-min="0" data-max="100" data-from="20" data-step="1" data-grid="true" data-grid-num="10" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number"/&gt;
+## &lt;/div&gt;
+```
+
+
+---
+
+# 범위도 가능 
+
+```r
+sliderInput("range", "Age:", min = 0, max = 100, value = c(24, 75))
+```
+
+&lt;img src="https://i.stack.imgur.com/KsRCZ.jpg" width="70%" style="display: block; margin: auto;" /&gt;
+
+.large[
+자세한 옵션은 [링크](https://shiny.rstudio.com/articles/sliders.html) 참고
+]
+
+
+---
+
+# 실습: `app_03.R`
+
+.large[
+
+ * `sidebarPanel` 에 Level 3 header(`h3`) 로 "Filter" 글자 추가. 
+ 
+ 
+ * 바로 아래에 `sliderInput` 추가
+  
+    - **id**: "VORP", 
+    - **min** -3, **max** 10, **value** 0 
+    - **Label**: "Player VORP rating at least"
+    
+ 
+ * 바로 아래에 `selectInput` 추가
+ 
+    - **id, label**: "Team", 
+    - **choices**: 데이터셋의 모든 팀
+    - Default **selected**: "Golden State Warriors"
+    - **Label**: "Player VORP rating at least"
+
+
+]
+
+---
+
+# Outputs
+
+**Step 1**: **UI** 에 output 종류에 따른 코드를 넣는다: `*Output`
+
+&lt;br&gt;
+**Step 2**: **Server** 에 output 내용 만드는 코드를 넣는다: `render*`
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;"&gt; UI Function &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Render Function &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Output &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; plotOutput() &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; renderPlot({}) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; Plot &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; textOutput() &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; renderText({}) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; Text &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; verbatimTextOutput() &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; renderPrint({}) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; R result &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; tableOutput() &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; renderTable({}) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; Table &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; uiOutput() &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; renderUI({}) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; Shiny UI element &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; DTOutput() &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; renderDT({}) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; table of DT package &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+
+
+---
+
+# 예: plot
+
+```r
+library(shiny)
+ui &lt;- fluidPage(
+  sliderInput("num", "Choose a number", 0, 100, 20),  ## id: num
+* plotOutput("myplot")                                ## id: myplot
+  )
+
+server &lt;- function(input, output){
+* output$myplot &lt;- renderPlot({                       ## id: myplot
+*   plot(rnorm(input$num))                            ## id: num
+    })
+}
+
+shinyApp(ui = ui, server = server)
+
+```
+
+
+---
+
+# 실습: `app_04.R`
+
+
+.large[
+ * `mainPanel` 에 `plotOutput` 추가
+ 
+  - **id**: "nba_plot"
+  
+ 
+ * 바로 아래에 `tableOutput` 추가
+ 
+  - **id**: "players_data"
+  
+ 
+주의! 화면 결과가 바뀌는 건 없다.
+
+]
+
+
+---
+
+# Using input$
+
+&lt;img src="inputn.png" width="1472" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# 실습: `app_05.R`
+
+
+.large[
+ *  `renderText`: **데이터에서 filtering 된 사람 수**  
+ 
+  - **id**: "num_players"
+
+  
+ * `renderPlot`: 필터링 데이터에서 **Salay** 값의 히스토그램
+ 
+  - **id**: "nba_plot"
+
+```r  
+ggplot(data, aes(Salary)) + geom_histogram()
+```
+
+ 
+ * `renderTable` `\(\rightarrow\)` `renderDT`: [반응형 테이블 DT](https://rstudio.github.io/DT/shiny.html) 
+ 
+  - **id**: "players_data"
+
+]
+---
+# 실습: `app_05.R`
+
+&lt;a href =" https://gomguard.tistory.com/243"&gt;https://gomguard.tistory.com/243&lt;/a&gt;
+
+
+---
+class: center, middle
+
+# Reactivity
+
+
+---
+
+# Reactive values
+
+.large[
+* 모든 **input** 은 **reactive value**.
+]
+
+```r
+server &lt;- function(input, output) {
+  
+  output$myplot &lt;- renderPlot({
+*   plot(rnorm(input$num))
+    })
+
+}
+```
+
+.large[
+`input$num` 이 변하면 output의 plot 도 변한다.
+]
+
+
+---
+
+# Reactive contexts
+
+.large[
+* 모든 **reactive value** 는 **reactive context** 안에서만 적용 가능.
+
+
+* `render*` 꼴은 전부 **reactive context**
+]
+
+```r
+server &lt;- function(input, output) {
+  
+* output$myplot &lt;- renderPlot({
+    plot(rnorm(input$num))
+    })
+
+}
+```
+
+
+---
+
+# Problem 1
+
+```r
+server &lt;- function(input, output) {
+
+* print(input$num)
+
+}
+  
+# ERROR: Operation not allowed without an active reactive context
+```
+
+---
+
+# Solution 1: `observe{()}`
+
+```r
+server &lt;- function(input, output) {
+
+* observe({
+*  print(input$num)
+* })
+
+}
+
+```
+
+2개 이상도 가능.
+
+```r
+server &lt;- function(input, output) {
+
+* observe({
+*  print(input$num1)
+*  print(input$num2)
+* })
+
+}
+
+```
+
+---
+
+# Problem 2
+
+```r
+server &lt;- function(input, output) {
+
+  x &lt;- input$num + 1
+
+}
+
+# ERROR: Operation not allowed without an active reactive context.
+```
+
+---
+
+# Solution 2: `reactive()`
+
+```r
+server &lt;- function(input, output) {
+
+* x &lt;- reactive({
+*  input$num + 1
+* })
+
+}
+```
+
+.large[
+**불러올 때는 `()` 붙여야 함: `x`가 아니고 `x()`**
+]
+
+```r
+server &lt;- function(input, output) {
+
+ x &lt;- reactive({
+  input$num + 1
+ })
+ 
+ output$text &lt;- renderText({
+* x()
+ })
+
+}
+```
+
+
+---
+
+# 실습: `app_06.R`
+
+.large[
+* `renderDT`, `renderText`, `renderPlot` 에 공통으로 쓰이는 `data` 를  **Reactive variable** `filtered_data` 로 저장. 
+
+
+* 만든 `filtered_data` 이용, `renderDT`, `renderText`, `renderPlot` 코드 간소화.
+
+
+* **Plot** 꾸미기: **심플한** theme, x 축을 **log scale** 로 
+
+```r
+theme_classic() + scale_x_log10(labels = scales::comma)
+```
+]
+
+---
+class: center, middle
+
+# Share your app
+
+
+---
+
+# [shinyapps.io](https://www.shinyapps.io/)
+
+.large[
+**Step 1**: ID 만들기
+ &lt;br&gt;
+ 
+**Step 2**: 앱 코드 `app.R` 에 저장. 
+ &lt;br&gt;
+ 
+**Step 3**: **"Publish Application"** 클릭
+
+&lt;img src="shinyio.png" width="1680" style="display: block; margin: auto;" /&gt;
+ 
+
+**Step 4**: 설명을 따라 계정 token 입력 후, `app.R` 을 업로드.
+&lt;br&gt;
+
+앱 주소는 **"https://아이디.shinyapps.io/앱이름/"**
+
+]
+
+
+---
+
+# 실습: `app_07.R`
+
+.large[
+* `sliderInput` 수정하기
+  
+  - **VORP** 값이 아닌 범위 선택.   
+
+
+* `selectInput` 수정하기
+
+  - `multiple = TRUE` 옵션으로 **Team** 여러 개 선택.   
+
+]
+
+---
+
+# 실습: `app_08.R`
+
+* `sidebarPanel` 에 **h3** 크기로 **"Plot options"** 글자 추가. 
+  
+
+* **그림 보여줄 변수 선택**하는 `selectInput` 추가하고 그림그리기.
+
+  - **id**: "variable", **label**: "Variable"
+  
+  - **choices**: "VORP", "Salary", "Age", "Height", "Weight"
+  
+
+&gt;ggplot 에서 `aes(input$variable)` 대신 `aes_string(input$variable)` 사용.  
+
+
+* **그림 종류** 고르는 `radioButton` 추가
+
+  - **id**: "plot_type", **label**: "Plot type"
+  
+  - **choices**: "histogram", "density"
+
+&gt;`geom_histogram()` or `geom_density()`
+
+
+
+
+---
+
+# 실습마지막: `app_09.R`
+
+* `sidebarPanel` 에 **x 축 log scale** 여부 선택하는 `checkboxInput` 추가 
+  
+  - **id**: "log", **label**: "Log scale"
+
+&gt; `scale_x_continuous()` or `scale_x_log10()`  
+
+
+* 그림 폰트 크기 조절하는 `numericInput` 추가 
+
+  - **id**: "size", **label**: "Font size"
+  
+&gt; `theme_classic(&lt;size&gt;)`
+  
+
+* **그림 색깔** 지정하는 `colourInput` 추가
+
+  - **id**: "col", **label**: "Line colour"
+  
+&gt; `geom_histogram(fill = input$col)`  
+
+
+
+
+---
+
+# 실습 목표
+
+.large[
+ * [RStudio cloud](https://rstudio.cloud/) 를 이용, 클라우드 환경에서 R을 쓸 수 있다.
+ 
+ 
+ * `app.R` 파일에 Shiny의 **ui**와 **server** 코드를 입력할 수 있다.
+ 
+ 
+ * `fluidPage`의 `sidebarLayout` 레이아웃을 이용, 왼쪽에는 UI 옵션, 오른쪽에는 해당되는 결과를 보여줄 수 있다.
+ 
+ 
+ * [DT](https://rstudio.github.io/DT/) 패키지로 데이터를, [ggplot2](https://ggplot2.tidyverse.org/) 로 히스토그램을 보여줄 수 있다.
+ 
+ 
+ * **Reactivity** 를 이해한다.
+ 
+ 
+ * [shinyapps.io](https://www.shinyapps.io/) 에 app 을 배포할 수 있다. 
+]
+
+
+
+---
+
+class: center, middle
+
+# END
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "<div class=\"progress-bar-container\">\n  <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">\n  </div>\n</div>\n",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "4:3"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
