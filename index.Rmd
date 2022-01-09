@@ -1,6 +1,8 @@
 ---
 title: "Shiny 기초실습"
-author: 김진섭, 이현기; [`r anicon::faa('github', animate='float', rtext='leevenstar')`](https://github.com/leevenstar)
+author: 
+  - 이현기[`r anicon::faa('github', animate='float', rtext='leevenstar')`](https://github.com/leevenstar)
+  - 김진섭[`r anicon::faa('github', animate='float', rtext='jinseob2kim')`](https://github.com/jinseob2kim)
 institute: "차라투(주)"
 date: "2022-01-10"
 output:
